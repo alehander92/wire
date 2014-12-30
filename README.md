@@ -34,6 +34,15 @@ Wire.decode_messages(<< 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0xf, 5 >>)
 
 
 ```
+
+## Install
+
+Add to your mix.exs deps
+
+```elixir
+{:wire, "~> 0.0.8"}
+```
+
 ## LICENSE
 
 MIT
