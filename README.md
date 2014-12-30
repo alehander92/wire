@@ -6,6 +6,7 @@ Wire
 Wire is an elixir package for decoding and encoding
 bittorrent peer wire protocol messages.
 
+
 A message is represented in the library as a keyword list with
 `:type`: the type of the message (`:keep_alive`, :`not_interested`, etc)
 and the other fields of the message, e.g.
@@ -33,4 +34,14 @@ Wire.decode_messages(<< 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0xf, 5 >>)
 
 
 ```
+## LICENSE
+
+MIT
+
+## Copyright
+
+Copyright (c) 2014-2015 Alexander Ivanov. See [LICENSE](LICENSE) for further details
+
+
+
 
