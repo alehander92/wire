@@ -31,47 +31,67 @@ defmodule Wire.Decoder do
   end
 
   def decode_message(message) do
-    << l :: 32-integer-big-unsigned, rest :: binary >> = message
+      << len :: 32-integer-big-unsigned,
+        rest :: binary >> = message
 
-    if l == 0 do
-      {[type: :keep_alive], rest}
-    else
-      << id, rest :: binary >> = rest
+      if len == 0 do
+        {[type: :keep_alive], rest}
+      else
+        << id, rest :: binary >> = rest
 
-      case id do
-        9 ->
-          << port :: 16-integer-big-unsigned, rest :: binary >> = rest
-          {[type: :port, listen_port: port], rest}
-        7 ->
-          l2 = l - 9
-          << index :: 32-integer-big-unsigned, begin :: 32-integer-big-unsigned,
-             block :: binary-size(l2), rest :: binary >> = rest
-          {[type: :piece, index: index, begin: begin, block: block], rest}
-        id when id in [8, 6] ->
-          << index   :: 32-integer-big-unsigned,
-             begin   :: 32-integer-big-unsigned,
-             length  :: 32-integer-big-unsigned,
-             rest    :: binary >> = rest
-          type = if id == 8 do :cancel else :request end
-          {[type: type, index: index, begin: begin, length: length], rest}
-
-        5 ->
-          l2 = l - 1
-          << field :: binary-size(l2), rest :: binary >> = rest
-          {[type: :bitfield, field: field], rest}
-        4 ->
-          << piece_index :: 32-integer-big-unsigned, rest :: binary >> = rest
-          {[type: :have, piece_index: piece_index], rest}
-        3 ->
-          {[type: :not_interested], rest}
-        2 ->
-          {[type: :interested], rest}
-        1 ->
-          {[type: :unchoke], rest}
-        0 ->
-          {[type: :choke], rest}
-
+        decode_message_type(len, id, rest)
       end
-    end
   end
+
+  def decode_message_type(_len, id, rest) when id == 9 do
+    << port :: 16-integer-big-unsigned, rest :: binary >> = rest
+    {[type: :port, listen_port: port], rest}
+  end
+
+  def decode_message_type(len, id, rest) when id == 7 do
+    block_length = len - 9
+    << index :: 32-integer-big-unsigned,
+       begin :: 32-integer-big-unsigned,
+       block :: binary-size(block_length),
+       rest  :: binary >> = rest
+    {[type: :piece, index: index, begin: begin, block: block], rest}
+  end
+
+  def decode_message_type(_len, id, rest) when id in [8, 6] do
+    << index   :: 32-integer-big-unsigned,
+       begin   :: 32-integer-big-unsigned,
+       length  :: 32-integer-big-unsigned,
+       rest    :: binary >> = rest
+       type = if id == 8 do :cancel else :request end
+       {[type: type, index: index, begin: begin, length: length], rest}
+  end
+
+  def decode_message_type(len, id, rest) when id == 5 do
+    l2 = len - 1
+    << field :: binary-size(l2), rest :: binary >> = rest
+    {[type: :bitfield, field: field], rest}
+  end
+
+  def decode_message_type(_len, id, rest) when id == 4 do
+    << piece_index :: 32-integer-big-unsigned, rest :: binary >> = rest
+    {[type: :have, piece_index: piece_index], rest}
+  end
+
+  def decode_message_type(_len, id, rest) when id == 3 do
+    {[type: :not_interested], rest}
+  end
+
+  def decode_message_type(_len, id, rest) when id == 2 do
+    {[type: :interested], rest}
+
+  end
+
+  def decode_message_type(_len, id, rest) when id == 1 do
+    {[type: :unchoke], rest}
+  end
+
+  def decode_message_type(_len, id, rest) when id == 0 do
+    {[type: :choke], rest}
+  end
+
 end
