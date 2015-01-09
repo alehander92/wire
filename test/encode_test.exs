@@ -33,5 +33,14 @@ defmodule WireEncoderTest do
   test "converts interested correctly" do
     assert encode(type: :interested) == << 0, 0, 0, 1, 2 >>
   end
-end
 
+  test "converts handshake correctly" do
+    extensions = <<0,0,0,0,0,0,0,0>>
+    peer_id    = "ffffffffffffffffffff"
+    info_hash  = "eeeeeeeeeeeeeeeeeeee"
+
+    result = <<19, 66, 105, 116, 84, 111, 114, 114, 101, 110, 116, 32, 112, 114, 111, 116, 111, 99, 111, 108, 0, 0, 0, 0, 0, 0, 0, 0>> <> info_hash <> peer_id
+
+    assert encode(type: :handshake, extensions: extensions, info_hash: info_hash, peer_id: peer_id) == result
+  end
+end
