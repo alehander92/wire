@@ -44,4 +44,14 @@ defmodule WireDecoderTest do
     assert decode_messages(<< 0, 0, 0, 1, 2, 0, 0, 0, 5>>, [[type: :keep_alive]]) ==
                           {[[type: :keep_alive], [type: :interested]], <<0, 0, 0, 5>>}
   end
+
+  test "parses handshake correctly" do
+    extensions = <<0,0,0,0,0,0,0,0>>
+    peer_id    = "ffffffffffffffffffff"
+    info_hash  = "eeeeeeeeeeeeeeeeeeee"
+    handshake = <<19, 66, 105, 116, 84, 111, 114, 114, 101, 110, 116, 32, 112, 114, 111, 116, 111, 99, 111, 108>> <> extensions <> info_hash <> peer_id
+
+    assert decode_message(handshake)  == {[type: :handshake, extension: <<0, 0, 0, 0, 0, 0, 0, 0>>, info_hash: info_hash, peer_id: peer_id], ""}
+  end
+
 end

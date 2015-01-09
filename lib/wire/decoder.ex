@@ -31,6 +31,19 @@ defmodule Wire.Decoder do
   end
 
   def decode_message(message) do
+    << pstrlen :: size(8),
+       rest    :: binary >> = message
+
+    if pstrlen == 19 do
+      << _pstr    :: binary-size(19),  ## "BitTorrent protocol"
+        extension :: binary-size(8),
+        info_hash :: binary-size(20),
+        peer_id   :: binary-size(20),
+        rest      :: binary >> = rest
+
+      {[type: :handshake, extension: extension,
+        info_hash: info_hash, peer_id: peer_id], rest}
+    else
       << len :: 32-integer-big-unsigned,
         rest :: binary >> = message
 
@@ -41,6 +54,7 @@ defmodule Wire.Decoder do
 
         decode_message_type(len, id, rest)
       end
+    end
   end
 
   def decode_message_type(_len, id, rest) when id == 9 do
