@@ -40,7 +40,7 @@ Wire.decode_messages(<< 0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 0, 0, 0xf, 5 >>)
 Add to your mix.exs deps
 
 ```elixir
-{:wire, "~> 0.0.8"}
+{:wire, "~> 0.1.0"}
 ```
 
 ## LICENSE

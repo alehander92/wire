@@ -3,7 +3,7 @@ defmodule Wire.Mixfile do
 
   def project do
     [app: :wire,
-     version: "0.0.8",
+     version: "0.1.0",
      elixir: "~> 1.0.0",
      description: "Encode and decode bittorrent peer wire protocol messages",
      package: package,
