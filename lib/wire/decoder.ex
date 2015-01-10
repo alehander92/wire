@@ -12,7 +12,9 @@ defmodule Wire.Decoder do
 
   def decode_messages(s, acc) do
     << l :: 32-integer-big-unsigned, rest :: binary >> = s
-    if byte_size(rest) < l do
+    << pstrlen :: size(8), _rest :: binary >> = s
+
+    if byte_size(rest) < l and pstrlen != 19 do
       { acc, s }
     else
       { message, rest } = decode_message(s)
