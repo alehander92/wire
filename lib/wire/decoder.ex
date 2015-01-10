@@ -7,18 +7,14 @@ defmodule Wire.Decoder do
   """
   @spec decode_messages(binary) :: {List.Keyword.t, binary}
   def decode_messages(binary) do
-    << l :: 32-integer-big-unsigned, rest :: binary >> = binary
-    cond do
-      byte_size(rest) < l ->
-        {[], binary}
-      true ->
-        decode_messages(binary, [])
-    end
+    decode_messages(binary, [])
   end
 
   def decode_messages(s, acc) do
     << l :: 32-integer-big-unsigned, rest :: binary >> = s
-    if byte_size(rest) < l do
+    << pstrlen :: size(8), _rest :: binary >> = s
+
+    if byte_size(rest) < l and pstrlen != 19 do
       { acc, s }
     else
       { message, rest } = decode_message(s)

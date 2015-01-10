@@ -49,9 +49,19 @@ defmodule WireDecoderTest do
     extensions = <<0,0,0,0,0,0,0,0>>
     peer_id    = "ffffffffffffffffffff"
     info_hash  = "eeeeeeeeeeeeeeeeeeee"
-    handshake = <<19, 66, 105, 116, 84, 111, 114, 114, 101, 110, 116, 32, 112, 114, 111, 116, 111, 99, 111, 108>> <> extensions <> info_hash <> peer_id
+    handshake  = <<19>> <> "BitTorrent protocol" <> extensions <> info_hash <> peer_id
 
     assert decode_message(handshake)  == {[type: :handshake, extension: <<0, 0, 0, 0, 0, 0, 0, 0>>, info_hash: info_hash, peer_id: peer_id], ""}
+  end
+
+  test "parses several messages correctly starting with a handshake" do
+    extensions = <<0,0,0,0,0,0,0,0>>
+    peer_id    = "ffffffffffffffffffff"
+    info_hash  = "eeeeeeeeeeeeeeeeeeee"
+    bitfield   = << 0, 0, 0, 6, 5, 0, 2, 4, 0, 2 >>
+    handshake  = <<19>> <> "BitTorrent protocol" <> extensions <> info_hash <> peer_id <> bitfield
+
+    assert decode_messages(handshake)  == {[[type: :handshake, extension: <<0, 0, 0, 0, 0, 0, 0, 0>>, info_hash: info_hash, peer_id: peer_id], [type: :bitfield, field: <<0, 2, 4, 0, 2>>]], ""}
   end
 
 end
