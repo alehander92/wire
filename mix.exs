@@ -21,6 +21,6 @@ defmodule Wire.Mixfile do
   end
 
   defp deps do
-    []
+    [{:bencoder, "~> 0.0.7"}]
   end
 end

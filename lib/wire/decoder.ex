@@ -53,6 +53,14 @@ defmodule Wire.Decoder do
     end
   end
 
+  def decode_message_type(len, id, rest) when id == 20 do
+    msg_len = len - 2
+    << ext_msg_id :: size(8),
+       message    :: binary-size(msg_len),
+       rest       :: binary >> = rest
+    {[type: :ltep, ext_msg_id: ext_msg_id, msg: Bencoder.decode(message)], rest}
+  end
+
   def decode_message_type(_len, id, rest) when id == 9 do
     << port :: 16-integer-big-unsigned, rest :: binary >> = rest
     {[type: :port, listen_port: port], rest}

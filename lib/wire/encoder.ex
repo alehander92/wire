@@ -9,6 +9,17 @@ defmodule Wire.Encoder do
       peer_id               :: binary-size(20)>>
   end
 
+  def encode(type: :ltep, ext_msg_id: ext_msg_id, msg: msg) when is_map(msg) do
+    bencoded_msg = Bencoder.encode(msg)
+    length       = byte_size(bencoded_msg) + 2
+
+    << length       :: 32-integer-big-unsigned,
+       20           :: size(8),
+       ext_msg_id   :: size(8),
+       bencoded_msg :: binary >>
+  end
+
+
   def encode(type: :port, listen_port: listen_port) do
     << 0, 0, 0, 3, listen_port :: 16-integer-big-unsigned, 0 >>
   end
