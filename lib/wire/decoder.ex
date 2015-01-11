@@ -58,7 +58,7 @@ defmodule Wire.Decoder do
     << ext_msg_id :: size(8),
        message    :: binary-size(msg_len),
        rest       :: binary >> = rest
-    {[type: :ltep, ext_msg_id: ext_msg_id, msg: Bencodex.decode(message)], rest}
+    {[type: :ltep, ext_msg_id: ext_msg_id, msg: Bencoder.decode(message)], rest}
   end
 
   def decode_message_type(_len, id, rest) when id == 9 do

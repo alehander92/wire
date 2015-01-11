@@ -10,7 +10,7 @@ defmodule Wire.Encoder do
   end
 
   def encode(type: :ltep, ext_msg_id: ext_msg_id, msg: msg) when is_map(msg) do
-    bencoded_msg = Bencodex.encode(msg)
+    bencoded_msg = Bencoder.encode(msg)
     length       = byte_size(bencoded_msg) + 2
 
     << length       :: 32-integer-big-unsigned,
