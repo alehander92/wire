@@ -5,6 +5,12 @@ defmodule WireEncoderTest do
 
   import Wire.Encoder, only: [encode: 1]
 
+  test "converts ltep correctly" do
+    result = <<0, 0, 0, 14, 20, 0, 100, 51, 58, 102, 111, 111, 51, 58, 98, 97, 114, 101>>
+
+    assert encode(type: :ltep, ext_msg_id: 0, msg: %{"foo" => "bar"}) == result
+  end
+
   test "converts port correctly" do
     assert encode(type: :port, listen_port: 80) ==
            << 0, 0, 0, 3, 0, 80, 0 >>
