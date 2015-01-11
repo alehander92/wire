@@ -26,6 +26,13 @@ defmodule WireDecoderTest do
     assert decode_messages(<< 0, 0, 0, 1, 1 >>) == {[[type: :unchoke]], <<>>}
   end
 
+  test "parses ltep message correctly" do
+    msg    = <<0, 0, 0, 14, 20, 0, 100, 51, 58, 102, 111, 111, 51, 58, 98, 97, 114, 101>>
+    result = {[[type: :ltep, ext_msg_id: 0, msg: %{"foo" => "bar"}]], <<>>}
+
+    assert decode_messages(msg) == result
+  end
+
   test "parses several messages" do
     assert decode_messages(<< 0, 0, 0, 0, 0, 0, 0, 1, 2 >>) ==
                           {[[type: :keep_alive], [type: :interested]], <<>>}
