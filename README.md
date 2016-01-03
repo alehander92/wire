@@ -43,6 +43,10 @@ Add to your mix.exs deps
 {:wire, "~> 0.2.0"}
 ```
 
+## Development
+
+Built and maintained by Alexander Ivanov, with substantial contributions by [Florian Adamsky](https://github.com/cit)
+
 ## LICENSE
 
 MIT
